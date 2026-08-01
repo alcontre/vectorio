@@ -60,7 +60,7 @@
 ////////////////////////////////////////////////////
 
 #if defined(VECTORMMIO_INSTR_SIM)
-static void sim_wr(volatile std::uint32_t *dst, std::uint32_t *src,
+static void sim_wr(volatile std::uint32_t *dst, const std::uint32_t *src,
                    std::uint32_t words) {
   assert((reinterpret_cast<uintptr_t>(dst) &
           (words * sizeof(std::uint32_t) - 1)) == 0);
@@ -79,7 +79,7 @@ static void sim_rd(std::uint32_t *dst, volatile std::uint32_t *src,
 }
 #endif // defined(VECTORMMIO_INSTR_SIM)
 
-static void store32(volatile std::uint32_t *dst, std::uint32_t *src) {
+static void store32(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_wr(dst, src, 1);
 #else
@@ -96,7 +96,7 @@ static void load32(std::uint32_t *dst, volatile std::uint32_t *src) {
 }
 
 #if MAX_BURST_WORDS >= 2
-static void store64(volatile std::uint32_t *dst, std::uint32_t *src) {
+static void store64(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_wr(dst, src, 2);
 #else
@@ -117,7 +117,7 @@ static void load64(std::uint32_t *dst, volatile std::uint32_t *src) {
 #endif // MAX_BURST_WORDS >= 2
 
 #if MAX_BURST_WORDS >= 4
-static void store128(volatile std::uint32_t *dst, std::uint32_t *src) {
+static void store128(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_wr(dst, src, 4);
 #else
@@ -142,7 +142,7 @@ static void load128(std::uint32_t *dst, volatile std::uint32_t *src) {
 #endif // MAX_BURST_WORDS >= 4
 
 #if MAX_BURST_WORDS >= 8
-static void store256(volatile std::uint32_t *dst, std::uint32_t *src) {
+static void store256(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_wr(dst, src, 8);
 #else
@@ -167,7 +167,7 @@ static void load256(std::uint32_t *dst, volatile std::uint32_t *src) {
 #endif // MAX_BURST_WORDS >= 8
 
 #if MAX_BURST_WORDS >= 16
-static void store512(volatile std::uint32_t *dst, std::uint32_t *src) {
+static void store512(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_wr(dst, src, 16);
 #else
@@ -193,7 +193,7 @@ static void load512(std::uint32_t *dst, volatile std::uint32_t *src) {
 
 namespace VectorMMIO {
 
-void write(volatile std::uint32_t *dst, std::uint32_t *src,
+void write(volatile std::uint32_t *dst, const std::uint32_t *src,
            std::uint32_t words) {
 
 #if MAX_BURST_WORDS >= 1
