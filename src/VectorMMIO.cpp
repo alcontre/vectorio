@@ -15,6 +15,9 @@
 //    u128     - sse2
 //    u256     - avx
 //    u512     - avx512
+// Instr set reqts for ARM:
+//    u32, u64 - Generic ARM
+//    u128     - ARM NEON
 
 #if defined(VECTORMMIO_INSTR_SIM)
 #if !defined(VECTORMMIO_INSTR_SIM_MAX_BURST_WORDS)
@@ -30,7 +33,9 @@
 #elif defined(VECTORMMIO_NO_BURST_WRITE)
 #define MAX_BURST_WORDS 1
 #else
-#if defined(__AVX512F__) && defined(__AVX__) && defined(__SSE2__)
+#if defined(__ARM_NEON) || defined(__ARM_NEON__)
+#define MAX_BURST_WORDS 4
+#elif defined(__AVX512F__) && defined(__AVX__) && defined(__SSE2__)
 #define MAX_BURST_WORDS 16
 #elif defined(__AVX__) && defined(__SSE2__)
 #define MAX_BURST_WORDS 8
@@ -51,6 +56,8 @@
 // SSE2 only
 #include <emmintrin.h>
 #endif
+#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
+#include <arm_neon.h>
 #endif
 
 #endif // !defined(VECTORMMIO_INSTR_SIM)
@@ -121,6 +128,10 @@ static void load64(std::uint32_t *dst, const volatile std::uint32_t *src) {
 static void store128(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_wr(dst, src, 4);
+#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
+  const uint32x4_t value = vld1q_u32(src);
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+  vst1q_u32(const_cast<std::uint32_t *>(dst), value);
 #else
   auto *dst128v = reinterpret_cast<volatile __m128i *>(dst);
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
@@ -134,6 +145,10 @@ static void store128(volatile std::uint32_t *dst, const std::uint32_t *src) {
 static void load128(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 4);
+#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+  const uint32x4_t value = vld1q_u32(const_cast<const std::uint32_t *>(src));
+  vst1q_u32(dst, value);
 #else
   const auto *src128v = reinterpret_cast<const volatile __m128i *>(src);
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
