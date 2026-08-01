@@ -10,41 +10,41 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(VectorMMIO STATIC src/VectorMMIO.cpp)
 
 target_include_directories(VectorMMIO
-	PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-		$<INSTALL_INTERFACE:include>
+   PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+      $<INSTALL_INTERFACE:include>
 )
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-	include(CTest)
+   include(CTest)
 
-	if(BUILD_TESTING)
-		function(add_vector_mmio_simulation_test max_burst_words)
-			set(target_name VectorMMIO_sim_${max_burst_words})
-			add_library(${target_name} STATIC src/VectorMMIO.cpp)
-			target_include_directories(${target_name}
-				PUBLIC
-					$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-			)
-			target_compile_definitions(${target_name}
-				PRIVATE
-					VECTORMMIO_INSTR_SIM
-					VECTORMMIO_INSTR_SIM_MAX_BURST_WORDS=${max_burst_words}
-			)
+   if(BUILD_TESTING)
+      function(add_vector_mmio_simulation_test max_burst_words)
+         set(target_name VectorMMIO_sim_${max_burst_words})
+         add_library(${target_name} STATIC src/VectorMMIO.cpp)
+         target_include_directories(${target_name}
+            PUBLIC
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+         )
+         target_compile_definitions(${target_name}
+            PRIVATE
+               VECTORMMIO_INSTR_SIM
+               VECTORMMIO_INSTR_SIM_MAX_BURST_WORDS=${max_burst_words}
+         )
 
-			add_executable(${target_name}_test tests/VectorMMIO_ladder_test.cpp)
-			target_link_libraries(${target_name}_test PRIVATE ${target_name})
-			target_compile_definitions(${target_name}_test
-				PRIVATE
-					VECTORMMIO_INSTR_SIM_MAX_BURST_WORDS=${max_burst_words}
-			)
-			add_test(NAME ${target_name}_test COMMAND ${target_name}_test)
-		endfunction()
+         add_executable(${target_name}_test tests/VectorMMIO_ladder_test.cpp)
+         target_link_libraries(${target_name}_test PRIVATE ${target_name})
+         target_compile_definitions(${target_name}_test
+            PRIVATE
+               VECTORMMIO_INSTR_SIM_MAX_BURST_WORDS=${max_burst_words}
+         )
+         add_test(NAME ${target_name}_test COMMAND ${target_name}_test)
+      endfunction()
 
-		add_vector_mmio_simulation_test(1)
-		add_vector_mmio_simulation_test(2)
-		add_vector_mmio_simulation_test(4)
-		add_vector_mmio_simulation_test(8)
-		add_vector_mmio_simulation_test(16)
-	endif()
+      add_vector_mmio_simulation_test(1)
+      add_vector_mmio_simulation_test(2)
+      add_vector_mmio_simulation_test(4)
+      add_vector_mmio_simulation_test(8)
+      add_vector_mmio_simulation_test(16)
+   endif()
 endif()
