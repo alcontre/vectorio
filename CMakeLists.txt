@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(VECTORMMIO_NO_BURST_WRITE
+   "Use 32-bit scalar MMIO transfers instead of wider bursts" OFF)
+
 add_library(VectorMMIO STATIC src/VectorMMIO.cpp)
 
 target_include_directories(VectorMMIO
@@ -14,6 +17,10 @@ target_include_directories(VectorMMIO
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>
 )
+
+if(VECTORMMIO_NO_BURST_WRITE)
+   target_compile_definitions(VectorMMIO PRIVATE VECTORMMIO_NO_BURST_WRITE)
+endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
    include(CTest)
