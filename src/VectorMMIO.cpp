@@ -69,7 +69,7 @@ static void sim_wr(volatile std::uint32_t *dst, const std::uint32_t *src,
   }
 }
 
-static void sim_rd(std::uint32_t *dst, volatile std::uint32_t *src,
+static void sim_rd(std::uint32_t *dst, const volatile std::uint32_t *src,
                    std::uint32_t words) {
   assert((reinterpret_cast<uintptr_t>(src) &
           (words * sizeof(std::uint32_t) - 1)) == 0);
@@ -87,7 +87,7 @@ static void store32(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #endif
 }
 
-static void load32(std::uint32_t *dst, volatile std::uint32_t *src) {
+static void load32(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 1);
 #else
@@ -106,11 +106,12 @@ static void store64(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #endif
 }
 
-static void load64(std::uint32_t *dst, volatile std::uint32_t *src) {
+static void load64(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 2);
 #else
-  const std::uint64_t value = *reinterpret_cast<volatile std::uint64_t *>(src);
+  const std::uint64_t value =
+      *reinterpret_cast<const volatile std::uint64_t *>(src);
   std::memcpy(dst, &value, sizeof(value));
 #endif
 }
@@ -129,12 +130,12 @@ static void store128(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #endif
 }
 
-static void load128(std::uint32_t *dst, volatile std::uint32_t *src) {
+static void load128(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 4);
 #else
-  auto *src128v = reinterpret_cast<volatile __m128i *>(src);
-  auto *src128 = const_cast<__m128i *>(src128v);
+  auto *src128v = reinterpret_cast<const volatile __m128i *>(src);
+  auto *src128 = const_cast<const __m128i *>(src128v);
   const __m128i reg = _mm_load_si128(src128);
   _mm_storeu_si128(reinterpret_cast<__m128i *>(dst), reg);
 #endif
@@ -154,12 +155,12 @@ static void store256(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #endif
 }
 
-static void load256(std::uint32_t *dst, volatile std::uint32_t *src) {
+static void load256(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 8);
 #else
-  auto *src256v = reinterpret_cast<volatile __m256i *>(src);
-  auto *src256 = const_cast<__m256i *>(src256v);
+  auto *src256v = reinterpret_cast<const volatile __m256i *>(src);
+  auto *src256 = const_cast<const __m256i *>(src256v);
   const __m256i reg = _mm256_load_si256(src256);
   _mm256_storeu_si256(reinterpret_cast<__m256i *>(dst), reg);
 #endif
@@ -179,12 +180,12 @@ static void store512(volatile std::uint32_t *dst, const std::uint32_t *src) {
 #endif
 }
 
-static void load512(std::uint32_t *dst, volatile std::uint32_t *src) {
+static void load512(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 16);
 #else
-  auto *src512v = reinterpret_cast<volatile __m512i *>(src);
-  auto *src512 = const_cast<__m512i *>(src512v);
+  auto *src512v = reinterpret_cast<const volatile __m512i *>(src);
+  auto *src512 = const_cast<const __m512i *>(src512v);
   const __m512i reg = _mm512_load_si512(src512);
   _mm512_storeu_si512(reinterpret_cast<__m512i *>(dst), reg);
 #endif
@@ -300,7 +301,7 @@ void write(volatile std::uint32_t *dst, const std::uint32_t *src,
   }
 }
 
-void read(std::uint32_t *dst, volatile std::uint32_t *src,
+void read(std::uint32_t *dst, const volatile std::uint32_t *src,
           std::uint32_t words) {
 
 #if MAX_BURST_WORDS >= 1
