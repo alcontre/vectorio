@@ -123,8 +123,9 @@ static void store128(volatile std::uint32_t *dst, const std::uint32_t *src) {
   sim_wr(dst, src, 4);
 #else
   auto *dst128v = reinterpret_cast<volatile __m128i *>(dst);
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
   auto *dst128 = const_cast<__m128i *>(dst128v);
-  auto *src128 = reinterpret_cast<const __m128i *>(src);
+  const auto *src128 = reinterpret_cast<const __m128i *>(src);
   const __m128i reg = _mm_loadu_si128(src128);
   _mm_store_si128(dst128, reg);
 #endif
@@ -134,8 +135,9 @@ static void load128(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 4);
 #else
-  auto *src128v = reinterpret_cast<const volatile __m128i *>(src);
-  auto *src128 = const_cast<const __m128i *>(src128v);
+  const auto *src128v = reinterpret_cast<const volatile __m128i *>(src);
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+  const auto *src128 = const_cast<const __m128i *>(src128v);
   const __m128i reg = _mm_load_si128(src128);
   _mm_storeu_si128(reinterpret_cast<__m128i *>(dst), reg);
 #endif
@@ -148,8 +150,9 @@ static void store256(volatile std::uint32_t *dst, const std::uint32_t *src) {
   sim_wr(dst, src, 8);
 #else
   auto *dst256v = reinterpret_cast<volatile __m256i *>(dst);
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
   auto *dst256 = const_cast<__m256i *>(dst256v);
-  auto *src256 = reinterpret_cast<const __m256i *>(src);
+  const auto *src256 = reinterpret_cast<const __m256i *>(src);
   const __m256i reg = _mm256_loadu_si256(src256);
   _mm256_store_si256(dst256, reg);
 #endif
@@ -159,8 +162,9 @@ static void load256(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 8);
 #else
-  auto *src256v = reinterpret_cast<const volatile __m256i *>(src);
-  auto *src256 = const_cast<const __m256i *>(src256v);
+  const auto *src256v = reinterpret_cast<const volatile __m256i *>(src);
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+  const auto *src256 = const_cast<const __m256i *>(src256v);
   const __m256i reg = _mm256_load_si256(src256);
   _mm256_storeu_si256(reinterpret_cast<__m256i *>(dst), reg);
 #endif
@@ -173,8 +177,9 @@ static void store512(volatile std::uint32_t *dst, const std::uint32_t *src) {
   sim_wr(dst, src, 16);
 #else
   auto *dst512v = reinterpret_cast<volatile __m512i *>(dst);
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
   auto *dst512 = const_cast<__m512i *>(dst512v);
-  auto *src512 = reinterpret_cast<const __m512i *>(src);
+  const auto *src512 = reinterpret_cast<const __m512i *>(src);
   const __m512i reg = _mm512_loadu_si512(src512);
   _mm512_store_si512(dst512, reg);
 #endif
@@ -184,8 +189,9 @@ static void load512(std::uint32_t *dst, const volatile std::uint32_t *src) {
 #if defined(VECTORMMIO_INSTR_SIM)
   sim_rd(dst, src, 16);
 #else
-  auto *src512v = reinterpret_cast<const volatile __m512i *>(src);
-  auto *src512 = const_cast<const __m512i *>(src512v);
+  const auto *src512v = reinterpret_cast<const volatile __m512i *>(src);
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+  const auto *src512 = const_cast<const __m512i *>(src512v);
   const __m512i reg = _mm512_load_si512(src512);
   _mm512_storeu_si512(reinterpret_cast<__m512i *>(dst), reg);
 #endif
